@@ -6,12 +6,10 @@ class Gene
   attr_accessor :mutant_phenotype
   
   def initialize (params = {}) 
-    @Gene_ID = params.fetch(:Gene_ID, "unknown")
-    unless @geneid.match(/A[Tt]\d[Gg]\d\d\d\d\d/)
-      abort "Incorrect AGI code in Gene_ID (gene_information.tsv)"
-    end
-    @Gene_name = params.fetch(:Gene_name, "unknown")
-    @mutant_phenotype = params.fetch(:mutant_phenotype, "")
+    @Gene_ID = params.fetch(:Gene_ID, nil)
+    @Gene_name = params.fetch(:Gene_name, nil)
+    @mutant_phenotype = params.fetch(:mutant_phenotype, nil)
+    @mutant_phenotype = @mutant_phenotype.strip
   end
   
 
