@@ -1,85 +1,100 @@
 #!/usr/bin/ruby
 
-gene_file = ARGV[0]
-stock_file = ARGV[1]
-cross_file = ARGV[2]
+gene_file, stock_file, cross_file, new_file = ARGV
+unless gene_file && stock_file && cross_file && new_file
+  abort "Incorrect number of arguments"
+end
+
+
+def parse_tsv(path)
+  data = IO.readlines(path)
+  data.each_with_index {|val, ind|
+    data[ind] = data[ind].split("\t")
+    }
+  return data
+end
+
 
 require "./Gene.rb"
 require "./SeedStock.rb"
-require "./Gene.rb"
-
-def parse_tsv(path)
-  return IO.readlines(path)  
-end
-
-
-def create_genes()
-    name = Gene.new(
-      gene1 = Gene.new
-      gene1.Gene_ID = gene_data[1].split("\t")[0]
-      gene1.Gene_name = gene_data[1].split("\t")[1]
-      gene1.mutant_phenotype = gene_data[1].split("\t")[2].split("\"")[1]
-    )
-end
-
-
-#def create_cross()
-#    name = clase.new(
-#      gene1 = Gene.new
-#      gene1.Gene_ID = gene_data[1].split("\t")[0]
-#      gene1.Gene_name = gene_data[1].split("\t")[1]
-#      gene1.mutant_phenotype = gene_data[1].split("\t")[2].split("\"")[1]
-#    )
-#end
-#
-#
-#def create_stocks()
-#    name = clase.new(
-#      gene1 = Gene.new
-#      gene1.Gene_ID = gene_data[1].split("\t")[0]
-#      gene1.Gene_name = gene_data[1].split("\t")[1]
-#      gene1.mutant_phenotype = gene_data[1].split("\t")[2].split("\"")[1]
-#    )
-#end
-
+require "./HybridCross.rb"
 
 gene_data = parse_tsv(gene_file)
 stock_data = parse_tsv(stock_file)
 cross_data = parse_tsv(cross_file)
 
 
-#puts gene_data[1].split("\t")[0]
-#puts gene_data[1].split("\t")[1]
-#puts gene_data[1].split("\t")[2].split("\"")[1]
+def crea_genes(data)
+  gene_id, gene_name, gene_mut_pheno = data
+  
+  gene = Gene.new(
+   :Gene_ID => gene_id,
+   :Gene_name => gene_name,
+   :mutant_phenotype => gene_mut_pheno
+  )
+  return gene
+end
+
+def crea_stocks(data)
+  seed_stock, mutant_id, last_planted, storage, remaining = data
+  
+  stock = Stock.new(
+   :Seed_Stock => seed_stock,
+   :Mutant_Gene_ID => mutant_id,
+   :Last_Planted => last_planted,
+   :Storage => storage,
+   :Grams_Remaining =>  remaining
+  )
+  
+  return stock
+end
+
+def crea_crosses(data)
+
+  
+  parent1, parent2, wild, p1, p2, p1p2 = data
+  
+  cross = Cross.new(
+   :Parent1 => parent1,
+   :Parent2 => parent2,
+   :F2_Wild => wild,
+   :F2_P1 => p1,
+   :F2_P2 =>  p2,
+   :F2_P1P2 =>  p1p2
+  )
+  
+  return cross
+end
 
 
-gene1 = Gene.new
-gene1.Gene_ID = gene_data[1].split("\t")[0]
-gene1.Gene_name = gene_data[1].split("\t")[1]
-gene1.mutant_phenotype = gene_data[1].split("\t")[2].split("\"")[1]
-
-puts gene1.Gene_ID, gene1.Gene_name, gene1.mutant_phenotype, gene1.number_of_genes
 
 
-#gene1 = Gene.new(
-#  :Gene_ID => gene_data[1].split("\t")[0], 
-#  :Gene_name => gene_data[1].split("\t")[1], 
-#  :mutant_phenotype => gene_data[1].split("\t")[2].split("\"")[1], 
-#  )
+all_genes = {}
+all_stocks = {}
+all_crosses = {}
 
 
-#puts gene1.Gene_ID, gene1.Gene_name, gene1.mutant_phenotype
+(gene_data.length - 1).times do |ind|
+  unless gene_data[ind + 1][0].match(/A[Tt]\d[Gg]\d\d\d\d\d/)
+    abort "Incorrect AGI code in Gene_ID (gene_information.tsv)"
+  end
+  all_genes[gene_data[ind + 1][0]] = crea_genes(gene_data[ind + 1])
+end
+#puts all_genes  
+
+(stock_data.length - 1).times do |ind|
+  all_stocks[stock_data[ind + 1][1]] = crea_stocks(stock_data[ind + 1])
+end
+puts all_stocks[[@Grams_Remaining]]
+  
+(cross_data.length - 1).times do |ind|
+  all_crosses[cross_data[ind + 1][0]] = crea_crosses(cross_data[ind + 1])
+end
+#puts all_crosses
 
 
-# properties.each do |property|
-#   puts properties
-# end
+all_stocks.each do |stock|
+  puts stock
+end
 
-
-# properties = data[0].split("\t")
-# properties
-
-
-# data.each do |row|
-#   puts row.split("\t")
-# end
+puts all_stocks
