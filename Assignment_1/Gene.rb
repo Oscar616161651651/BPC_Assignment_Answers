@@ -1,6 +1,6 @@
 class Gene  
   
-  #@@number_of_genes = 0
+
   attr_accessor :Gene_ID
   attr_accessor :Gene_name
   attr_accessor :mutant_phenotype
@@ -12,9 +12,9 @@ class Gene
     @mutant_phenotype = @mutant_phenotype.strip
   end
   
-
-  #def how_many
-  #  return @@number_of_genes
-  #end
+  #Returns the name of a gene.
+  def get_name
+    return @Gene_name
+  end
     
 end
