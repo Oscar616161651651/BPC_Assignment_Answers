@@ -73,23 +73,7 @@ class Interaction_Network
     
     
 #
-#def get_GO (locus)
-#  go_info = []
-#  locus.each do |locus|
-#  res = fetch("http://togows.org/entry/uniprot/#{locus}/dr.json"); 
-#  #body = res.body
-#  body = JSON.parse(res.body)
-#  #puts body
-#  for elem in body[0]["GO"].each
-#    if elem[1] =~ /^P:/
-#      go = elem[1]
-#      next if go_info.include?(go)
-#    go_info.push(go)
-#    end
-#  end
-#  end
-#  return go_info
-#end
+
 
 
 end
